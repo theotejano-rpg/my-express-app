@@ -6,8 +6,21 @@ app.use(express.static('public'));
 
 app.use(express.json());
 
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
+app.use ((err, req, res, next) =>{
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
 app.post('/submit', (req, res) => {
     const data = req.body;
+    
+    console.log(data);
+    
     res.send(`Received: ${JSON.stringify(data)}`);
 });
 
@@ -21,4 +34,17 @@ app.get('/about', (req, res) => {
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
+    
+});
+
+const items = ['Apple', 'Banana', 'Orange'];
+
+app.get('/items', (req, res) => {
+    res.json(items);
+});
+
+app.post('/items', (req, res) => {
+    const newItem = req.body.item;
+    items.push(newItem);
+    res.json(items);
 });
